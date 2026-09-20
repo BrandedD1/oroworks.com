@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OROWorks — The Scoreless Industry</title>
+<meta name="description" content="OROWorks is building a new dynamic industry that progresses scoreless accounts across all fields of science. Provenance over ranking. Evidence over scores.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23090a0c'/%3E%3Ccircle cx='10' cy='8' r='2.4' fill='none' stroke='%23d4af37' stroke-width='1.6'/%3E%3Ccircle cx='10' cy='24' r='2.4' fill='none' stroke='%23d4af37' stroke-width='1.6'/%3E%3Ccircle cx='22' cy='8' r='2.4' fill='none' stroke='%23d4af37' stroke-width='1.6'/%3E%3Ccircle cx='22' cy='24' r='2.4' fill='none' stroke='%23d4af37' stroke-width='1.6'/%3E%3Cpath d='M10 8 L22 24 M10 24 L22 8' stroke='%23d4af37' stroke-width='1' opacity='0.6'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --void: #090a0c;
+    --void-2: #0e1014;
+    --panel: #14161b;
+    --line: #262a33;
+    --gold: #d4af37;
+    --gold-bright: #f0d878;
+    --gold-dim: #8a7326;
+    --ink: #e8e6df;
+    --ink-dim: #9a978e;
+    --ink-faint: #6b6962;
+    --cyan: #5fb8c9;
+    --serif: "Cormorant Garamond", "Times New Roman", Georgia, serif;
+    --sans: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+    --mono: "JetBrains Mono", "SF Mono", Consolas, monospace;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--void);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.65;
+    overflow-x: hidden;
+  }
+
+  ::selection { background: var(--gold); color: var(--void); }
+
+  /* ---------- shared ---------- */
+
+  .wrap { max-width: 1120px; margin: 0 auto; padding: 0 28px; }
+
+  .kicker {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 18px;
+  }
+
+  .kicker::before {
+    content: "◆ ";
+    color: var(--gold-dim);
+  }
+
+  h2 {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: clamp(30px, 4.4vw, 46px);
+    line-height: 1.12;
+    letter-spacing: 0.01em;
+    margin-bottom: 22px;
+  }
+
+  .lede {
+    color: var(--ink-dim);
+    font-size: 18px;
+    max-width: 640px;
+    line-height: 1.75;
+  }
+
+  section { padding: 110px 0; position: relative; }
+
+  .rule {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--line) 20%, var(--line) 80%, transparent);
+  }
+
+  /* ---------- nav ---------- */
+
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 20px 0;
+    transition: background 0.35s ease, border-color 0.35s ease, padding 0.35s ease;
+    border-bottom: 1px solid transparent;
+  }
+
+  nav.scrolled {
+    background: rgba(9, 10, 12, 0.88);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-bottom-color: var(--line);
+    padding: 13px 0;
+  }
+
+  .nav-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+  }
+
+  .brand-mark { display: block; }
+
+  .brand-name {
+    font-family: var(--serif);
+    font-size: 21px;
+    letter-spacing: 0.22em;
+    color: var(--ink);
+    font-weight: 500;
+  }
+
+  .brand-name em { color: var(--gold); font-style: normal; }
+
+  .nav-links { display: flex; gap: 34px; align-items: center; }
+
+  .nav-links a {
+    color: var(--ink-dim);
+    text-decoration: none;
+    font-size: 13px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--gold-bright); }
+
+  @media (max-width: 720px) { .nav-links { display: none; } }
+
+  /* ---------- hero ---------- */
+
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    position: relative;
+    padding: 140px 0 90px;
+  }
+
+  #graph-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+  }
+
+  .hero::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 65% 55% at 50% 45%, transparent 30%, var(--void) 100%);
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .hero-inner { position: relative; z-index: 2; width: 100%; }
+
+  .hero h1 {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: clamp(48px, 8.5vw, 104px);
+    line-height: 1.02;
+    letter-spacing: 0.015em;
+    margin: 14px 0 26px;
+  }
+
+  .hero h1 .gold {
+    color: var(--gold);
+    display: inline-block;
+    animation: goldShift 7s ease-in-out infinite;
+  }
+
+  @keyframes goldShift {
+    0%, 100% { color: #d4af37; }
+    50% { color: #f0d878; text-shadow: 0 0 34px rgba(212, 175, 55, 0.35); }
+  }
+
+  .hero-tag {
+    color: var(--ink-dim);
+    font-size: clamp(17px, 2vw, 21px);
+    max-width: 590px;
+    line-height: 1.75;
+  }
+
+  .hero-tag strong { color: var(--ink); font-weight: 600; }
+
+  .hero-cta { margin-top: 44px; display: flex; gap: 18px; flex-wrap: wrap; }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 15px 32px;
+    font-size: 13px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: 1px solid var(--gold);
+    transition: all 0.25s ease;
+    cursor: pointer;
+    font-family: var(--sans);
+    background: transparent;
+  }
+
+  .btn-primary { background: var(--gold); color: var(--void); font-weight: 600; }
+  .btn-primary:hover { background: var(--gold-bright); border-color: var(--gold-bright); transform: translateY(-2px); }
+
+  .btn-ghost { color: var(--gold); background: transparent; }
+  .btn-ghost:hover { background: rgba(212, 175, 55, 0.08); transform: translateY(-2px); }
+
+  .hero-meta {
+    position: absolute;
+    bottom: 34px;
+    left: 0; right: 0;
+    z-index: 2;
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.22em;
+    color: var(--ink-faint);
+    text-transform: uppercase;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 28px;
+  }
+
+  @media (max-width: 720px) { .hero-meta span:last-child { display: none; } }
+
+  /* ---------- manifesto strip ---------- */
+
+  .strip {
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    background: var(--void-2);
+    padding: 26px 0;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .marquee {
+    display: flex;
+    gap: 0;
+    white-space: nowrap;
+    animation: scroll 36s linear infinite;
+    width: max-content;
+  }
+
+  @keyframes scroll { to { transform: translateX(-50%); } }
+
+  .marquee span {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    padding: 0 34px;
+    position: relative;
+  }
+
+  .marquee span::after {
+    content: "◆";
+    color: var(--gold-dim);
+    position: absolute;
+    right: -7px;
+    top: 1px;
+    font-size: 9px;
+  }
+
+  /* ---------- pillars ---------- */
+
+  .pillars { display: grid; grid-template-columns: repeat(3, 1fr); gap: 26px; margin-top: 56px; }
+
+  @media (max-width: 900px) { .pillars { grid-template-columns: 1fr; } }
+
+  .pillar {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    padding: 40px 34px;
+    position: relative;
+    transition: border-color 0.3s, transform 0.3s;
+  }
+
+  .pillar:hover { border-color: var(--gold-dim); transform: translateY(-4px); }
+
+  .pillar-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--gold-dim);
+    letter-spacing: 0.3em;
+    margin-bottom: 22px;
+  }
+
+  .pillar h3 {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 25px;
+    margin-bottom: 14px;
+    letter-spacing: 0.02em;
+  }
+
+  .pillar p { color: var(--ink-dim); font-size: 15px; line-height: 1.7; }
+
+  .pillar .glyph {
+    position: absolute;
+    top: 30px;
+    right: 30px;
+    opacity: 0.5;
+  }
+
+  /* ---------- scoreless section ---------- */
+
+  .split { display: grid; grid-template-columns: 1.05fr 1fr; gap: 70px; align-items: center; }
+
+  @media (max-width: 900px) { .split { grid-template-columns: 1fr; gap: 44px; } }
+
+  .score-table {
+    border: 1px solid var(--line);
+    background: var(--panel);
+    font-size: 14.5px;
+  }
+
+  .score-table .row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .score-table .row:last-child { border-bottom: none; }
+
+  .score-table .row > div { padding: 20px 24px; }
+
+  .score-table .row > div:first-child {
+    border-right: 1px solid var(--line);
+    color: var(--ink-faint);
+  }
+
+  .score-table .row > div:last-child { color: var(--ink); }
+
+  .score-table .head > div {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: 0.26em;
+    text-transform: uppercase;
+    padding: 14px 24px;
+  }
+
+  .score-table .head > div:first-child { color: var(--ink-faint); }
+  .score-table .head > div:last-child { color: var(--gold); }
+
+  .score-table .gold-accent { color: var(--gold) !important; }
+
+  /* ---------- lanes / portfolio ---------- */
+
+  .lanes { display: grid; grid-template-columns: 1fr 1fr; gap: 26px; margin-top: 56px; }
+
+  @media (max-width: 900px) { .lanes { grid-template-columns: 1fr; } }
+
+  .lane {
+    border: 1px solid var(--line);
+    padding: 38px 36px;
+    background: linear-gradient(160deg, var(--panel) 0%, var(--void-2) 100%);
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s, transform  0.3s;
+  }
+
+  .lane:hover { border-color: var(--gold-dim); transform: translateY(-4px); }
+
+  .lane::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--gold), transparent 70%);
+    opacity: 0.55;
+  }
+
+  .lane-status {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 9.5px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--cyan);
+    border: 1px solid rgba(95, 184, 201, 0.35);
+    padding: 4px 10px;
+    margin-bottom: 20px;
+  }
+
+  .lane h3 {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 24px;
+    margin-bottom: 12px;
+  }
+
+  .lane p { color: var(--ink-dim); font-size: 15px; line-height: 1.7; }
+
+  .lane .field {
+    margin-top: 22px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-faint);
+    letter-spacing: 0.12em;
+  }
+
+  .lane .field b { color: var(--gold-dim); font-weight: 400; }
+
+  /* ---------- process ---------- */
+
+  .steps { counter-reset: step; margin-top: 56px; }
+
+  .step {
+    display: grid;
+    grid-template-columns: 84px 1fr;
+    gap: 30px;
+    padding: 34px 0;
+    border-bottom: 1px solid var(--line);
+    align-items: start;
+  }
+
+  .step:last-child { border-bottom: none; }
+
+  .step-num {
+    font-family: var(--serif);
+    font-size: 52px;
+    color: transparent;
+    -webkit-text-stroke: 1px var(--gold-dim);
+    line-height: 1;
+    padding-top: 4px;
+  }
+
+  .step h3 {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 23px;
+    margin-bottom: 8px;
+  }
+
+  .step p { color: var(--ink-dim); font-size: 15.5px; max-width: 620px; }
+
+  /* ---------- CTA ---------- */
+
+  .cta-final {
+    text-align: center;
+    background:
+      radial-gradient(ellipse 50% 60% at 50% 110%, rgba(212, 175, 55, 0.09), transparent),
+      var(--void-2);
+    border-top: 1px solid var(--line);
+  }
+
+  .cta-final h2 { max-width: 760px; margin-left: auto; margin-right: auto; }
+
+  .iam {
+    font-family: var(--serif);
+    font-size: clamp(58px, 10vw, 130px);
+    letter-spacing: 0.3em;
+    color: transparent;
+    background: linear-gradient(180deg, var(--gold-bright), var(--gold-dim));
+    -webkit-background-clip: text;
+    background-clip: text;
+    margin: 54px 0 30px;
+    text-indent: 0.3em;
+  }
+
+  /* ---------- footer ---------- */
+
+  footer {
+    border-top: 1px solid var(--line);
+    padding: 46px 0 54px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-faint);
+    letter-spacing: 0.1em;
+    line-height: 2;
+  }
+
+  .footer-grid {
+    display: flex;
+    justify-content: space-between;
+    gap: 40px;
+    flex-wrap: wrap;
+  }
+
+  .footer-grid a { color: var(--ink-dim); text-decoration: none; }
+  .footer-grid a:hover { color: var(--gold); }
+
+  .evidence-strip {
+    margin-top: 36px;
+    padding-top: 26px;
+    border-top: 1px solid var(--line);
+    display: flex;
+    gap: 30px;
+    flex-wrap: wrap;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  .evidence-strip span::before { content: "— "; color: var(--gold-dim); }
+
+  /* ---------- reveal animation ---------- */
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(26px);
+    transition: opacity 0.8s cubic-bezier(0.2, 0.7, 0.3, 1), transform 0.8s cubic-bezier(0.2, 0.7, 0.3, 1);
+  }
+
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { transition: none; opacity: 1; transform: none; }
+    .marquee { animation: none; }
+    .hero h1 .gold { animation: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ NAV ============ -->
+<nav id="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="#top" aria-label="OROWorks home">
+      <svg class="brand-mark" width="30" height="30" viewBox="0 0 32 32" aria-hidden="true">
+        <rect width="32" height="32" fill="none" stroke="#262a33"/>
+        <circle cx="10" cy="8"  r="2.4" fill="none" stroke="#d4af37" stroke-width="1.4"/>
+        <circle cx="10" cy="24" r="2.4" fill="none" stroke="#d4af37" stroke-width="1.4"/>
+        <circle cx="22" cy="8"  r="2.4" fill="none" stroke="#d4af37" stroke-width="1.4"/>
+        <circle cx="22" cy="24" r="2.4" fill="none" stroke="#d4af37" stroke-width="1.4"/>
+        <path d="M10 8 L22 24 M10 24 L22 8" stroke="#d4af37" stroke-width="0.9" opacity="0.55"/>
+      </svg>
+      <span class="brand-name">ORO<em>WORKS</em></span>
+    </a>
+    <div class="nav-links">
+      <a href="#scoreless">Scoreless</a>
+      <a href="#pillars">Industry</a>
+      <a href="#lanes">Works</a>
+      <a href="/ledger.html">Ledger</a>
+      <a href="#process">Method</a>
+      <a href="#join">Contact</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ============ HERO ============ -->
+<header class="hero" id="top">
+  <canvas id="graph-canvas" aria-hidden="true"></canvas>
+  <div class="wrap hero-inner">
+    <div class="kicker">A new dynamic industry</div>
+    <h1>The scoreless<br>accounts of <span class="gold">science</span>.</h1>
+    <p class="hero-tag">
+      OROWorks is building an industry where knowledge carries <strong>provenance, not rankings</strong> —
+      where every field of science keeps accounts that verify <strong>what is true</strong>
+      instead of scoring <strong>who is winning</strong>.
+    </p>
+    <div class="hero-cta">
+      <a class="btn btn-primary" href="#scoreless">Enter the Industry</a>
+      <a class="btn btn-ghost" href="/ledger.html">View the Living Ledger</a>
+    </div>
+  </div>
+  <div class="hero-meta">
+    <span>OROWORKS / FOUNDER-DIRECTED</span>
+    <span>STATE: PRESENTED · NOT ADMITTED</span>
+    <span>GENESIS MMXXVI</span>
+  </div>
+</header>
+
+<!-- ============ MARQUEE ============ -->
+<div class="strip" aria-hidden="true">
+  <div class="marquee" id="marquee">
+    <span>Mathematics</span><span>Physics</span><span>Computer Science</span><span>Biology</span>
+    <span>Chemistry</span><span>Astronomy</span><span>Geology</span><span>Economics</span>
+    <span>Psychology</span><span>Medicine</span><span>Engineering</span><span>Philosophy</span>
+    <span>Mathematics</span><span>Physics</span><span>Computer Science</span><span>Biology</span>
+    <span>Chemistry</span><span>Astronomy</span><span>Geology</span><span>Economics</span>
+    <span>Psychology</span><span>Medicine</span><span>Engineering</span><span>Philosophy</span>
+  </div>
+</div>
+
+<!-- ============ SCORELESS ============ -->
+<section id="scoreless">
+  <div class="wrap split">
+    <div class="reveal">
+      <div class="kicker">The founding distinction</div>
+      <h2>A score is not a truth.</h2>
+      <p class="lede">
+        Modern science runs on scores — citations, rankings, metrics, and indexes that measure
+        attention and reward popularity. They decide who gets read, funded, and believed.
+        But a score cannot tell you whether a claim is true. Only provenance can.
+      </p>
+      <p class="lede" style="margin-top:18px">
+        A <strong style="color:var(--ink)">scoreless account</strong> is a record of knowledge that carries its own
+        evidence state — its lineage, its verification, its limits — without a ranking attached.
+        The question shifts from <em>"how highly is this rated?"</em> to
+        <em>"what is this, where did it come from, and how far has it been verified?"</em>
+      </p>
+    </div>
+    <div class="reveal">
+      <div class="score-table" role="table" aria-label="Scored systems versus scoreless accounts">
+        <div class="row head">
+          <div>Scored world</div>
+          <div>Scoreless account</div>
+        </div>
+        <div class="row">
+          <div>Ranks people & claims</div>
+          <div class="gold-accent">Records lineage</div>
+        </div>
+        <div class="row">
+          <div>Rewards attention</div>
+          <div class="gold-accent">Rewards verification</div>
+        </div>
+        <div class="row">
+          <div>Single opaque number</div>
+          <div class="gold-accent">Typed evidence state</div>
+        </div>
+        <div class="row">
+          <div>Can be gamed</div>
+          <div class="gold-accent">Must be reproduced</div>
+        </div>
+        <div class="row">
+          <div>Forgets its history</div>
+          <div class="gold-accent">Ancestry stays recoverable</div>
+        </div>
+        <div class="row">
+          <div>One field at a time</div>
+          <div class="gold-accent">All fields of science</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="rule"></div>
+
+<!-- ============ PILLARS ============ -->
+<section id="pillars">
+  <div class="wrap">
+    <div class="reveal">
+      <div class="kicker">The industry</div>
+      <h2>Three movements, one direction.</h2>
+      <p class="lede">OROWorks is not a product. It is an industry in the making — a set of
+        working systems that progress scoreless accounts across every field.</p>
+    </div>
+    <div class="pillars">
+      <div class="pillar reveal">
+        <svg class="glyph" width="30" height="30" viewBox="0 0 30 30" aria-hidden="true">
+          <circle cx="15" cy="15" r="10" fill="none" stroke="#8a7326" stroke-width="1.2"/>
+          <circle cx="15" cy="15" r="3" fill="#d4af37"/>
+        </svg>
+        <div class="pillar-num">01</div>
+        <h3>Account</h3>
+        <p>Build the scoreless account itself: a typed record structure where every piece of
+          knowledge carries its parentage, its evidence state, and its verification boundary —
+          generated, tested, verified, admitted — each state explicit, none conflated.</p>
+      </div>
+      <div class="pillar reveal">
+        <svg class="glyph" width="30" height="30" viewBox="0 0 30 30" aria-hidden="true">
+          <path d="M15 3 L26 15 L15 27 L4 15 Z" fill="none" stroke="#8a7326" stroke-width="1.2"/>
+          <path d="M15 8 L21 15 L15 22 L9 15 Z" fill="none" stroke="#d4af37" stroke-width="1"/>
+        </svg>
+        <div class="pillar-num">02</div>
+        <h3>Progress</h3>
+        <p>Give accounts a way to advance without competition. Descendants never replace
+          ancestors; ancestry remains recoverable; stalled lines reopen earlier work rather than
+          discarding it. Progress becomes a property of the record, not a race between people.</p>
+      </div>
+      <div class="pillar reveal">
+        <svg class="glyph" width="30" height="30" viewBox="0 0 30 30" aria-hidden="true">
+          <circle cx="8" cy="8" r="3" fill="none" stroke="#8a7326" stroke-width="1.2"/>
+          <circle cx="22" cy="8" r="3" fill="none" stroke="#8a7326" stroke-width="1.2"/>
+          <circle cx="15" cy="21" r="3" fill="none" stroke="#d4af37" stroke-width="1.4"/>
+          <path d="M8 11 L14 19 M22 11 L16 19" stroke="#8a7326" stroke-width="1"/>
+        </svg>
+        <div class="pillar-num">03</div>
+        <h3>All fields</h3>
+        <p>Carry the same account structure across mathematics, physics, biology, medicine,
+          economics — every discipline. One industry-standard shape for scientific knowledge,
+          as universal as the ledger is to finance.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="rule"></div>
+
+<!-- ============ LANES ============ -->
+<section id="lanes">
+  <div class="wrap">
+    <div class="reveal">
+      <div class="kicker">The works</div>
+      <h2>Lines already in motion.</h2>
+      <p class="lede">Each work is a working system with its own boundary discipline —
+        locally tested where stated, held at its gate where stated, never overclaimed.</p>
+    </div>
+    <div class="lanes">
+      <div class="lane reveal">
+        <span class="lane-status">IN DEVELOPMENT</span>
+        <h3>The McFly Atlas</h3>
+        <p>An interactive public map of generative graph systems — the founding puzzles of
+          Tower of Hanoi, Three Utilities, River Crossing, and Five Rooms — rendered as
+          explorable mathematics, showing how typed parent structures generate verified
+          descendants across a bipartite universe.</p>
+        <div class="field"><b>DOMAIN</b> · Graph theory / interactive visualization</div>
+      </div>
+      <div class="lane reveal">
+        <span class="lane-status">IN DEVELOPMENT</span>
+        <h3>Zero Laboratory</h3>
+        <p>A symbolic laboratory for the local geometry of zero — polynomial germs, tangent
+          cones, blow-ups, and iterated lift traces — turning the resolution of singularities
+          into a visible, reproducible experiment.</p>
+        <div class="field"><b>DOMAIN</b> · Algebraic geometry / research instrument</div>
+      </div>
+      <div class="lane reveal">
+        <span class="lane-status">FOUNDATIONAL</span>
+        <h3>The Provenance Engine</h3>
+        <p>The typed receipt and evidence-state machinery underneath everything: append-only
+          ledgers, signed witness heads, idempotent operations, and hash-bound reproduction
+          handoffs. Trust flows from verification, not reputation.</p>
+        <div class="field"><b>DOMAIN</b> · Systems / verification infrastructure</div>
+      </div>
+      <div class="lane reveal">
+        <span class="lane-status">FOUNDATIONAL</span>
+        <h3>The Living Ledger</h3>
+        <p>The governance layer: a ledger of works where records are cemented, audited, held,
+          or reopened by explicit founder decision — with every state transition typed,
+          timestamped, and recoverable. The industry's registry.</p>
+        <div class="field"><b>DOMAIN</b> · Governance / record systems</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="rule"></div>
+
+<!-- ============ PROCESS ============ -->
+<section id="process">
+  <div class="wrap">
+    <div class="reveal">
+      <div class="kicker">The method</div>
+      <h2>How an account progresses.</h2>
+    </div>
+    <div class="steps">
+      <div class="step reveal">
+        <div class="step-num">01</div>
+        <div>
+          <h3>Generate</h3>
+          <p>Every account begins as a candidate — a constructed work with declared parents.
+            Generation confers existence, nothing more.</p>
+        </div>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">02</div>
+        <div>
+          <h3>Test</h3>
+          <p>The candidate is executed against explicit, finite test scopes. Results are
+            recorded as receipts — environments, commands, outputs, hashes. A local pass is
+            a local truth.</p>
+        </div>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">03</div>
+        <div>
+          <h3>Verify</h3>
+          <p>Independent reproduction is attempted in a separate runtime by a separate party.
+            Receipts are compared, not trusted. Divergence is recorded, not hidden.</p>
+        </div>
+      </div>
+      <div class="step reveal">
+        <div class="step-num">04</div>
+        <div>
+          <h3>Admit</h3>
+          <p>Only after verification does an account enter the admitted ledger — and admission
+            is reversible by explicit reopening when a line stalls. No score ever attaches.
+            The evidence state is the whole reputation.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="rule"></div>
+
+<!-- ============ FINAL CTA ============ -->
+<section class="cta-final" id="join">
+  <div class="wrap reveal">
+    <div class="kicker" style="text-align:center">The motto</div>
+    <div class="iam">IAM</div>
+    <p class="lede" style="margin: 0 auto; text-align: center;">
+      Retention circling back to goal completion.<br>
+      Every interaction a small goal in service of overall growth.
+    </p>
+    <div style="margin-top: 46px">
+      <a class="btn btn-primary" href="mailto:founder@oroworks.com">founder@oroworks.com</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="wrap">
+    <div class="footer-grid">
+      <div>
+        OROWORKS · CASPER, WYOMING<br>
+        THE SCORELESS INDUSTRY · EST. MMXXVI
+      </div>
+      <div>
+        <a href="#scoreless">Scoreless</a> ·
+        <a href="#pillars">Industry</a> ·
+        <a href="#lanes">Works</a> ·
+        <a href="/ledger.html">Ledger</a> ·
+        <a href="#process">Method</a>
+      </div>
+    </div>
+    <div class="evidence-strip">
+      <span>PRESENTED ≠ ADMITTED</span>
+      <span>GENERATED ≠ VERIFIED</span>
+      <span>EXISTENCE ≠ AUTHORITY</span>
+      <span>© OROWORKS MMXXVI</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ================= typed bipartite K_3,3 hero ================= */
+(function () {
+  var canvas = document.getElementById('graph-canvas');
+  var ctx = canvas.getContext('2d');
+  var W, H, dpr;
+  var parents = [], children = [];
+  var mouse = { x: -999, y: -999 };
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function resize() {
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = canvas.clientWidth; H = canvas.clientHeight;
+    canvas.width = W * dpr; canvas.height = H * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    layout();
+  }
+
+  function layout() {
+    parents = [];
+    children = [];
+    var cx = W * 0.72, cy = H * 0.5;
+    var spreadY = Math.min(H * 0.34, 300);
+    var sideOffset = Math.min(W * 0.09, 150);
+
+    var sides = [
+      { x: cx - sideOffset, label: 'ALPHA' },
+      { x: cx + sideOffset, label: 'BETA' }
+    ];
+
+    sides.forEach(function (side, si) {
+      for (var i = 0; i < 3; i++) {
+        parents.push({
+          x: side.x + (si === 0 ? -14 : 14),
+          y: cy - spreadY + i * spreadY,
+          side: si,
+          i: i,
+          r: 7,
+          phase: Math.random() * Math.PI * 2
+        });
+      }
+    });
+
+    parents.forEach(function (p) {
+      parents.forEach(function (q) {
+        if (p.side !== q.side) {
+          children.push({
+            a: p, b: q,
+            t: Math.random(),
+            dir: 0.0016 + Math.random() * 0.0022,
+            born: 0
+          });
+        }
+      });
+    });
+  }
+
+  function childPos(c) {
+    var mx = (c.a.x + c.b.x) / 2 + (c.b.y - c.a.y) * 0.13;
+    var my = (c.a.y + c.b.y) / 2 - (c.b.x - c.a.x) * 0.13;
+    var t = c.t;
+    return {
+      x: (1 - t) * (1 - t) * c.a.x + 2 * (1 - t) * t * mx + t * t * c.b.x,
+      y: (1 - t) * (1 - t) * c.a.y + 2 * (1 - t) * t * my + t * t * c.b.y
+    };
+  }
+
+  function draw(ts) {
+    ctx.clearRect(0, 0, W, H);
+
+    /* edges */
+    children.forEach(function (c) {
+      ctx.strokeStyle = 'rgba(212, 175, 55, 0.07)';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(c.a.x, c.a.y);
+      ctx.lineTo(c.b.x, c.b.y);
+      ctx.stroke();
+    });
+
+    /* children */
+    children.forEach(function (c) {
+      if (!reduced) {
+        c.t += c.dir;
+        if (c.t > 1.15) { c.t = -0.15; c.born = 0; }
+        if (c.t > 0 && c.t < 1) c.born = Math.min(1, c.born + 0.03);
+      }
+      if (c.t < 0 || c.t > 1) return;
+      var pos = childPos(c);
+      var glow = Math.sin(Math.PI * c.t);
+      var r = 2.2 + 2.6 * glow;
+      ctx.beginPath();
+      ctx.arc(pos.x, pos.y, r, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(240, 216, 120,' + (0.14 + 0.72 * glow).toFixed(3) + ')';
+      ctx.fill();
+    });
+
+    /* parents */
+    parents.forEach(function (p) {
+      var pulse = reduced ? 0 : 1 + 0.06 * Math.sin(ts / 900 + p.phase);
+      var md = Math.hypot(mouse.x - p.x, mouse.y - p.y);
+      var hot = md < 120;
+      var rr = p.r * pulse * (hot ? 1.35 : 1);
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, rr + 7, 0, Math.PI * 2);
+      ctx.strokeStyle = 'rgba(212, 175, 55,' + (hot ? 0.4 : 0.14) + ')';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, rr, 0, Math.PI * 2);
+      ctx.strokeStyle = '#d4af37';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, rr - 3.5, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(212, 175, 55, 0.16)';
+      ctx.fill();
+    });
+
+    /* faint grid of child nodes at intersections */
+    ctx.fillStyle = 'rgba(232, 230, 223, 0.30)';
+    parents.forEach(function (a) {
+      parents.forEach(function (b) {
+        if (a.side === b.side) return;
+        var mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
+        ctx.fillRect(mx - 1, my - 1, 2, 2);
+      });
+    });
+
+    requestAnimationFrame(draw);
+  }
+
+  window.addEventListener('resize', resize);
+  window.addEventListener('mousemove', function (e) {
+    var rect = canvas.getBoundingClientRect();
+    mouse.x = e.clientX - rect.left;
+    mouse.y = e.clientY - rect.top;
+  });
+
+  resize();
+  requestAnimationFrame(draw);
+})();
+
+/* ================= nav scroll ================= */
+(function () {
+  var nav = document.getElementById('nav');
+  function onScroll() {
+    nav.classList.toggle('scrolled', window.scrollY > 40);
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+
+/* ================= reveal on scroll ================= */
+(function () {
+  var els = document.querySelectorAll('.reveal');
+  if (!('IntersectionObserver' in window)) {
+    els.forEach(function (el) { el.classList.add('visible'); });
+    return;
+  }
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (en) {
+      if (en.isIntersecting) {
+        en.target.classList.add('visible');
+        io.unobserve(en.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  els.forEach(function (el) { io.observe(el); });
+})();
+</script>
+</body>
+</html>

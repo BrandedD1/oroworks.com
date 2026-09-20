@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OROWorks — The Living Ledger</title>
+<meta name="description" content="Public read view of the OROWorks Living Ledger: milestones, containers, and the roll-call census. Provenance over ranking. Evidence over scores.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23090a0c'/%3E%3Ccircle cx='10' cy='8' r='2.4' fill='none' stroke='%23d4af37' stroke-width='1.6'/%3E%3Ccircle cx='10' cy='24' r='2.4' fill='none' stroke='%23d4af37' stroke-width='1.6'/%3E%3Ccircle cx='22' cy='8' r='2.4' fill='none' stroke='%23d4af37' stroke-width='1.6'/%3E%3Ccircle cx='22' cy='24' r='2.4' fill='none' stroke='%23d4af37' stroke-width='1.6'/%3E%3Cpath d='M10 8 L22 24 M10 24 L22 8' stroke='%23d4af37' stroke-width='1' opacity='0.6'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --void: #090a0c; --void-2: #0e1014; --panel: #14161b; --line: #262a33;
+    --gold: #d4af37; --gold-bright: #f0d878; --gold-dim: #8a7326;
+    --ink: #e8e6df; --ink-dim: #9a978e; --ink-faint: #6b6962;
+    --cyan: #5fb8c9; --red: #c96a5f; --amber: #c9a85f; --green: #7ec98a;
+    --serif: "Cormorant Garamond", "Times New Roman", Georgia, serif;
+    --sans: "Inter", "Segoe UI", system-ui, sans-serif;
+    --mono: "JetBrains Mono", "SF Mono", Consolas, monospace;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--void); color: var(--ink); font-family: var(--sans); font-size: 15px; line-height: 1.6; }
+  .wrap { max-width: 1080px; margin: 0 auto; padding: 0 26px; }
+
+  header { padding: 64px 0 36px; border-bottom: 1px solid var(--line); }
+  .kicker { font-family: var(--mono); font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase; color: var(--gold); margin-bottom: 14px; }
+  .kicker::before { content: "◆ "; color: var(--gold-dim); }
+  h1 { font-family: var(--serif); font-weight: 500; font-size: clamp(34px, 5.5vw, 58px); line-height: 1.08; }
+  h1 span { color: var(--gold); }
+  .sub { color: var(--ink-dim); max-width: 640px; margin-top: 16px; font-size: 16.5px; line-height: 1.7; }
+
+  .evidence-banner {
+    margin-top: 26px; display: inline-block; font-family: var(--mono); font-size: 10.5px;
+    letter-spacing: 0.18em; color: var(--cyan); border: 1px solid rgba(95,184,201,0.35);
+    padding: 7px 14px; text-transform: uppercase;
+  }
+
+  .stats { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); margin: 40px 0 0; }
+  @media (max-width: 860px) { .stats { grid-template-columns: repeat(2, 1fr); } }
+  .stat { background: var(--void-2); padding: 22px 18px; }
+  .stat .n { font-family: var(--serif); font-size: 34px; color: var(--gold-bright); line-height: 1; }
+  .stat .l { font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-faint); margin-top: 9px; }
+
+  section { padding: 58px 0; border-bottom: 1px solid var(--line); }
+  h2 { font-family: var(--serif); font-weight: 500; font-size: clamp(24px, 3.4vw, 34px); margin-bottom: 8px; }
+  .note { color: var(--ink-dim); font-size: 14.5px; max-width: 640px; margin-bottom: 30px; }
+
+  .board { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  @media (max-width: 960px) { .board { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 640px) { .board { grid-template-columns: 1fr; } }
+
+  .col { background: var(--panel); border: 1px solid var(--line); padding: 22px 20px; }
+  .col h3 { font-family: var(--mono); font-size: 10px; letter-spacing: 0.24em; text-transform: uppercase; margin-bottom: 4px; }
+  .col .cnt { font-family: var(--mono); font-size: 11px; color: var(--ink-faint); margin-bottom: 14px; }
+  .col ul { list-style: none; }
+  .col li { padding: 9px 0; border-top: 1px solid var(--line); display: flex; gap: 10px; align-items: baseline; }
+  .col li b { font-family: var(--mono); font-size: 11px; color: var(--gold-dim); font-weight: 400; min-width: 30px; }
+  .col li span { font-size: 14px; color: var(--ink-dim); }
+
+  .st-done h3 { color: var(--green); } .st-active h3 { color: var(--gold); }
+  .st-gate h3 { color: var(--amber); } .st-ready h3 { color: var(--cyan); }
+  .st-blocked h3 { color: var(--red); } .st-backlog h3 { color: var(--ink-faint); }
+
+  .census { border: 1px solid var(--line); }
+  .crow { display: grid; grid-template-columns: 170px 1fr 64px; gap: 16px; align-items: center; padding: 13px 20px; border-bottom: 1px solid var(--line); }
+  .crow:last-child { border-bottom: none; }
+  .crow .name { font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em; color: var(--ink-dim); }
+  .crow .bar { height: 10px; background: var(--void-2); position: relative; }
+  .crow .bar i { position: absolute; inset: 0 auto 0 0; background: linear-gradient(90deg, var(--gold-dim), var(--gold)); }
+  .crow .val { font-family: var(--mono); font-size: 12px; color: var(--gold-bright); text-align: right; }
+  @media (max-width: 640px) { .crow { grid-template-columns: 110px 1fr 48px; padding: 12px 14px; } }
+
+  .trajectory { display: flex; align-items: flex-end; gap: 10px; height: 170px; padding: 26px 4px 0; }
+  .tr-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+  .tr-bar { width: 100%; background: linear-gradient(180deg, var(--gold), var(--gold-dim)); min-height: 12px; }
+  .tr-bar.flat { background: linear-gradient(180deg, #3d3a2c, #2c2a22); }
+  .tr-label { font-family: var(--mono); font-size: 9px; color: var(--ink-faint); letter-spacing: 0.08em; text-align: center; line-height: 1.5; }
+  .tr-flag { margin-top: 26px; border: 1px solid rgba(201, 106, 95, 0.4); background: rgba(201, 106, 95, 0.06); padding: 18px 22px; font-size: 14.5px; color: var(--ink-dim); }
+  .tr-flag b { color: var(--red); font-weight: 600; }
+
+  footer { padding: 44px 0 54px; font-family: var(--mono); font-size: 10.5px; color: var(--ink-faint); letter-spacing: 0.14em; line-height: 2.1; text-transform: uppercase; }
+  .boundaries { display: flex; gap: 28px; flex-wrap: wrap; }
+  .boundaries span::before { content: "— "; color: var(--gold-dim); }
+  a { color: var(--ink-dim); text-decoration: none; } a:hover { color: var(--gold); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="kicker">OROWorks · Public read view</div>
+    <h1>The Living <span>Ledger</span></h1>
+    <p class="sub">
+      The registry of the scoreless industry — every milestone, container, and census object,
+      presented with its evidence state and nothing else. No rankings. No scores.
+      The evidence state is the whole reputation.
+    </p>
+    <div class="evidence-banner">SNAPSHOT 2026-09-20 · EVIDENCE STATE: EXECUTED · PUBLIC READ ≠ AUTHENTICATION</div>
+    <div class="stats">
+      <div class="stat"><div class="n">1,886</div><div class="l">Census objects</div></div>
+      <div class="stat"><div class="n">526</div><div class="l">Ledger items</div></div>
+      <div class="stat"><div class="n">97</div><div class="l">Relay packets</div></div>
+      <div class="stat"><div class="n">104</div><div class="l">Founder events</div></div>
+      <div class="stat"><div class="n">17</div><div class="l">Milestones</div></div>
+    </div>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <h2>Milestone Board</h2>
+    <p class="note">Sixteen tracked milestones across four phases, each with exit artifacts, non-claims,
+      and authority split between instrument and founder.</p>
+    <div class="board">
+      <div class="col st-done">
+        <h3>Done</h3><div class="cnt">1</div>
+        <ul><li><b>M0</b><span>Board Foundation</span></li></ul>
+      </div>
+      <div class="col st-active">
+        <h3>Active</h3><div class="cnt">6</div>
+        <ul>
+          <li><b>M1</b><span>Notebook Recovery</span></li>
+          <li><b>M2</b><span>Attribution Audit</span></li>
+          <li><b>M3</b><span>ORBIT Source Recovery</span></li>
+          <li><b>M10</b><span>COI Firewall</span></li>
+          <li><b>M12</b><span>Founder Ruling Queue</span></li>
+          <li><b>M15</b><span>Cross-Instrument Shared-Ledger Intake</span></li>
+        </ul>
+      </div>
+      <div class="col st-gate">
+        <h3>Prepared at Gate</h3><div class="cnt">3</div>
+        <ul>
+          <li><b>M4</b><span>ORBIT Adapter Decision</span></li>
+          <li><b>M5</b><span>Freeze Literal Atlas Runtime</span></li>
+          <li><b>M8</b><span>UltraD and DyadicD Lineage</span></li>
+        </ul>
+      </div>
+      <div class="col st-ready">
+        <h3>Ready</h3><div class="cnt">3</div>
+        <ul>
+          <li><b>M9</b><span>CHIG Exact Resume</span></li>
+          <li><b>M14</b><span>Galaxy Operating Model</span></li>
+          <li><b>M16</b><span>Continuous Multi-Instrument Communication</span></li>
+        </ul>
+      </div>
+      <div class="col st-blocked">
+        <h3>Blocked</h3><div class="cnt">3</div>
+        <ul>
+          <li><b>M6</b><span>D3 Derivative Repair</span></li>
+          <li><b>M7</b><span>D1 and D2 Reassessment</span></li>
+          <li><b>M11</b><span>Living Tree Durable Persistence</span></li>
+        </ul>
+      </div>
+      <div class="col st-backlog">
+        <h3>Backlog</h3><div class="cnt">1</div>
+        <ul><li><b>M13</b><span>Release Package</span></li></ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Container Census</h2>
+    <p class="note">Five hundred twenty-six ledger items held across eight typed containers.
+      The Living Tree carries two-thirds of the system's body.</p>
+    <div class="census" id="census"></div>
+  </div>
+</section>
+
+<section style="border-bottom: none;">
+  <div class="wrap">
+    <h2>Roll-Call Trajectory</h2>
+    <p class="note">Eleven census snapshots from September 16–20. The universe grew by ten objects,
+      then held at 1,886 across five consecutive snapshots.</p>
+    <div class="trajectory" id="trajectory"></div>
+    <div class="tr-flag">
+      <b>Stall signature.</b> Five consecutive snapshots with zero object growth — including three taken
+      September 20. Under the governing law of this system, STALL ⇒ REOPEN EARLIER ANCESTRY. The Founder's
+      same-day reopening of the Galaxy McFly → ORBIT line is recorded as the countermove.
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="boundaries">
+      <span>PRESENTED ≠ ADMITTED</span>
+      <span>PUBLIC READ ≠ AUTHENTICATION ≠ REPRODUCTION</span>
+      <span>GENERATED ≠ VERIFIED</span>
+      <span>EXISTENCE ≠ AUTHORITY</span>
+    </div>
+    <div style="margin-top: 18px">
+      OROWORKS · THE SCORELESS INDUSTRY · <a href="/">OROWORKS.COM</a> · SNAPSHOT MMXXVI-09-20
+    </div>
+  </div>
+</footer>
+
+<script>
+  var containers = [
+    ["LIVING_TREE", 345], ["CODE_BROWN", 70], ["LOOSE_ENDS", 26], ["VAULT", 25],
+    ["GRAB_BAG", 24], ["UNKNOWNS", 23], ["FOUNDER_QUEUE", 12], ["JUNK_DRAWER", 1]
+  ];
+  var maxC = 345;
+  document.getElementById('census').innerHTML = containers.map(function (c) {
+    var pct = (c[1] / maxC * 100).toFixed(1);
+    return '<div class="crow"><div class="name">' + c[0] + '</div>' +
+      '<div class="bar"><i style="width:' + pct + '%"></i></div>' +
+      '<div class="val">' + c[1] + '</div></div>';
+  }).join('');
+
+  var snapshots = [
+    ["09-16", 1876], ["09-16", 1885], ["09-16", 1885], ["09-16", 1886], ["09-16", 1886],
+    ["09-17", 1886], ["09-20", 1886], ["09-20", 1886], ["09-20", 1886], ["09-20", 1886], ["09-20", 1886]
+  ];
+  var minO = 1870, maxO = 1890;
+  document.getElementById('trajectory').innerHTML = snapshots.map(function (s, i) {
+    var h = ((s[1] - minO) / (maxO - minO)) * 100;
+    var flat = s[1] === 1886;
+    var label = (i === 0 || i === 4 || i === 10) ? s[1] : "&nbsp;";
+    return '<div class="tr-col"><div class="tr-label">' + label + '</div>' +
+      '<div class="tr-bar' + (flat ? ' flat' : '') + '" style="height:' + h + '%"></div>' +
+      '<div class="tr-label">' + s[0] + '<br>#' + (i + 1) + '</div></div>';
+  }).join('');
+</script>
+</body>
+</html>
